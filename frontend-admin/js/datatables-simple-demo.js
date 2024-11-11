@@ -4116,11 +4116,6 @@ function initializeMahasiswaTable() {
         tbody.appendChild(row);
     });
 
-
-
-
-
-
     // Buat kontrol pagination
     const cardBody = mainTable.closest('.card-body');
     // Hapus pagination controls yang sudah ada (jika ada)
