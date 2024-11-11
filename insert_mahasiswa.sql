@@ -1,4 +1,47 @@
-INSERT INTO mahasiswa (nim, nama, jenisKelamin, IPS, IPK) VALUES
+use ppl2024;
+
+CREATE TABLE mahasiswa (
+    nim VARCHAR(20) PRIMARY KEY,
+    nama VARCHAR(100),
+    jurusan VARCHAR(50),
+    jenisKelamin ENUM('Laki-laki', 'Perempuan'),
+    IPS DECIMAL(3, 2),
+    IPK DECIMAL(3, 2)
+);
+
+CREATE TABLE mata_kuliah (
+    kodeMk VARCHAR(10) PRIMARY KEY,
+    mataKuliah VARCHAR(100),
+    sks INT,
+    jenisMk VARCHAR(50),
+    semesterMk TINYINT
+);
+
+CREATE TABLE krs (
+    id_krs INT AUTO_INCREMENT PRIMARY KEY,
+    kodeMk VARCHAR(10),
+    semesterKRS TINYINT,
+    nim VARCHAR(20),
+    nilai DECIMAL(3, 2),
+    bobot DECIMAL(2, 1),
+    FOREIGN KEY (kodeMk) REFERENCES mata_kuliah(kodeMk),
+    FOREIGN KEY (nim) REFERENCES mahasiswa(nim)
+);
+
+CREATE TABLE ipk (
+    id_ipk INT AUTO_INCREMENT PRIMARY KEY,
+    nim VARCHAR(20),
+    smt TINYINT,
+    tahun YEAR,
+    IPS DECIMAL(3, 2),
+    IPK DECIMAL(3, 2),
+    FOREIGN KEY (nim) REFERENCES mahasiswa(nim)
+);
+
+
+
+
+INSERT INTO ppl2024.mahasiswa (nim, nama, jurusan, jenisKelamin, IPS, IPK) VALUES
 ('21010001', 'Aulia Agnia', 'Teknik Informatika', 'Perempuan', 2.86, 3.12),
 ('21010002', 'Dean Brahmanda', 'Sistem Informasi', 'Perempuan', 3.46, 3.99),
 ('21010003', 'Ariel Rakabuming', 'Manajemen Informatika', 'Laki-laki', 2.37, 3.82),

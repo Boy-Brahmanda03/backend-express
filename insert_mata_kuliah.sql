@@ -1,4 +1,4 @@
-INSERT INTO mata_kuliah (kodeMk, mataKuliah, sks, semesterMk) VALUES
+INSERT INTO ppl2024.mata_kuliah (kodeMk, mataKuliah, sks, jenisMk, semesterMk) VALUES
 ('TI101', 'Algoritma dan Pemrograman', 3, 'Wajib', 1),
 ('TI102', 'Matematika Diskrit', 3, 'Wajib', 1),
 ('TI103', 'Organisasi Komputer', 3, 'Wajib', 1),

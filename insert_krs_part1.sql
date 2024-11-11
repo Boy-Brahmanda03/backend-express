@@ -1,4 +1,4 @@
-INSERT INTO krs (kodeMk, semesterKRS, nim, tahun, nilai, bobot) VALUES
+INSERT INTO ppl2024.krs (kodeMk, semesterKRS, nim, tahun, nilai, bobot) VALUES
 ('TI101', 1, '21010001', 2021, 2.27, 2.0),
 ('TI102', 1, '21010001', 2021, 3.22, 3.0),
 ('TI103', 1, '21010001', 2021, 3.2, 3.0),
