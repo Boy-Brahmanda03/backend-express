@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fs = require("fs");
 
 const mysql = require("mysql");
 const db = mysql.createConnection({
