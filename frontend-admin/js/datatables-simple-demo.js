@@ -293,7 +293,8 @@ function calculateIPS(filteredKrsMhs) {
 
 // Initialize dropdown listener when the document is ready
 document.addEventListener("DOMContentLoaded", function () {
-  const nim = "21010001"; // Replace with the actual student ID or a dynamic way to retrieve it
+  const urlParams = new URLSearchParams(window.location.search);
+  const nim = urlParams.get("nim"); // Replace with the actual student ID or a dynamic way to retrieve it
   initializeDropdownListener(nim); // Start listening for changes in the dropdown for the specific student ID
 });
 
