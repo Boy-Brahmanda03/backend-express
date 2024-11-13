@@ -135,10 +135,10 @@ app.get("/api/mahasiswa/filter", (req, res) => {
   });
 });
 
-app.get("/api/mahasiswa/krs/:nim/:semester", (req, res) => {
+app.get("/api/mahasiswa/krs/:nim/", (req, res) => {
   const { nim } = req.params;
   const query = `
-    SELECT k.*, mk.* FROM krs k join mata_kuliah mk on k.kodeMk = mk.kodeMk WHERE nim = ? and semesterKRS = ? ;
+    SELECT k.*, mk.* FROM krs k join mata_kuliah mk on k.kodeMk = mk.kodeMk WHERE nim = ? ;
   `;
   db.query(query, [nim], (err, results) => {
     if (err) {
