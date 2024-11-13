@@ -37,75 +37,78 @@ function paginate(items, itemsPerPage, pageNumber) {
 
 // Fungsi untuk membuat kontrol pagination
 function createPaginationControls(totalItems, container) {
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const paginationContainer = document.createElement("div");
-  paginationContainer.className =
+	const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+	const paginationContainer = document.createElement("div");
+	paginationContainer.className =
     "pagination-container d-flex justify-content-end mt-3";
 
-	// Previous button
-	const prevButton = document.createElement("button");
-	prevButton.className = "btn btn-outline-primary btn-sm me-2";
-	prevButton.innerHTML = "&laquo; Previous";
-	prevButton.disabled = currentPage === 1;
-	prevButton.onclick = () => {
-		if (currentPage > 1) {
+		// Define urlParams to retrieve URL parameters
+		const urlParams = new URLSearchParams(window.location.search);
+
+		// Previous button
+		const prevButton = document.createElement("button");
+		prevButton.className = "btn btn-outline-primary btn-sm me-2";
+		prevButton.innerHTML = "&laquo; Previous";
+		prevButton.disabled = currentPage === 1;
+		prevButton.onclick = () => {
+			if (currentPage > 1) {
 			currentPage--;
 			updateURLWithPage(currentPage);
 			if (urlParams.get("nim")) {
 				showMataKuliah();
 			}
 			initializeMahasiswaTable();
+			}
+		};
+
+  // Next button
+	const nextButton = document.createElement("button");
+	nextButton.className = "btn btn-outline-primary btn-sm";
+	nextButton.innerHTML = "Next &raquo;";
+	nextButton.disabled = currentPage >= totalPages;
+	nextButton.onclick = () => {
+		if (currentPage < totalPages) {
+		currentPage++;
+		updateURLWithPage(currentPage);
+		initializeMahasiswaTable();
 		}
 	};
 
-  // Next button
-  const nextButton = document.createElement("button");
-  nextButton.className = "btn btn-outline-primary btn-sm";
-  nextButton.innerHTML = "Next &raquo;";
-  nextButton.disabled = currentPage >= totalPages;
-  nextButton.onclick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      updateURLWithPage(currentPage);
-      initializeMahasiswaTable();
-    }
-  };
+	// Page info
+	const pageInfo = document.createElement("span");
+	pageInfo.className = "mx-3 align-self-center";
+	pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
 
-  // Page info
-  const pageInfo = document.createElement("span");
-  pageInfo.className = "mx-3 align-self-center";
-  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-  paginationContainer.appendChild(prevButton);
-  paginationContainer.appendChild(pageInfo);
-  paginationContainer.appendChild(nextButton);
-  container.appendChild(paginationContainer);
+	paginationContainer.appendChild(prevButton);
+	paginationContainer.appendChild(pageInfo);
+	paginationContainer.appendChild(nextButton);
+	container.appendChild(paginationContainer);
 }
 
 // Fungsi untuk update URL dengan parameter page
 function updateURLWithPage(page) {
-  const url = new URL(window.location.href);
-  url.searchParams.set("page", page);
-  window.history.pushState({}, "", url);
+	const url = new URL(window.location.href);
+	url.searchParams.set("page", page);
+	window.history.pushState({}, "", url);
 }
 
 async function getMahasiswa() {
-  const url = "http://localhost:3001/api/mahasiswa";
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
+	const url = "http://localhost:3001/api/mahasiswa";
+	try {
+		const response = await fetch(url, {
+		headers: {
+			"Content-Type": "application/json",
+		},
+		});
+		if (!response.ok) {
+		throw new Error(`Response status: ${response.status}`);
+		}
 
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
+		const json = await response.json();
+		return json;
+	} catch (error) {
+		console.error(error.message);
+	}
 }
 
 async function getIpkMhsByNim(nim) {
