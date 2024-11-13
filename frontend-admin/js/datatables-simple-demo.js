@@ -1,7 +1,4 @@
 window.addEventListener("DOMContentLoaded", (event) => {
-	// Simple-DataTables
-	// https://github.com/fiduswriter/Simple-DataTables/wiki
-
 	const datatablesSimple = document.getElementById("datatablesSimple");
 	if (datatablesSimple) {
 		new simpleDatatables.DataTable(datatablesSimple);
@@ -51,9 +48,6 @@ function createPaginationControls(totalItems, container) {
 		if (currentPage > 1) {
 			currentPage--;
 			updateURLWithPage(currentPage);
-			if (urlParams.get("nim")) {
-				showMataKuliah();
-			}
 			initializeMahasiswaTable();
 		}
 	};
