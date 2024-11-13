@@ -198,76 +198,99 @@ async function initializeMahasiswaTable() {
   }
 }
 
-// Fungsi untuk menampilkan detail mata kuliah
-async function showMataKuliah(id) {
-  const mahasiswa = await getIpkMhsByNim(id);
-  const krsMhs = await getKrsMhs(id);
-  console.log(mahasiswa);
-  console.log(krsMhs);
-  if (mahasiswa && krsMhs) {
-    // Update judul di atas tabel
-    document.getElementById(
-      "nilaiIPK"
-    ).textContent = `IPK : ${mahasiswa.cumulativeIPK} `;
-    document.getElementById("nilaiIPS").textContent = `IPS : -`;
-    document.querySelector("h1.mt-4").textContent = `${mahasiswa.nama}`;
-    document.querySelector(
-      ".breadcrumb-item.active"
-    ).textContent = `${mahasiswa.nim}`;
+// Function to initialize the event listener on the dropdown
+// Function to initialize the event listener on the dropdown
+function initializeDropdownListener(id) {
+  const dropdown = document.getElementById("ddlViewBy");
 
-    // Dapatkan referensi ke tabel
-    const table = document.getElementById("datatablesSimple");
-    const tbody = table.querySelector("tbody");
+  if (!dropdown) {
+    console.error("Dropdown element with id 'ddlViewBy' not found.");
+    return;
+  }
 
-    // Kosongkan tbody
-    tbody.innerHTML = "";
+  // Event listener to trigger when the dropdown value changes
+  dropdown.addEventListener("change", function () {
+    const selectedValue = dropdown.value;
+    console.log("Dropdown value changed: ", selectedValue); // For debugging
+    showMataKuliah(id, selectedValue); // Trigger the function with the student id and selected semester
+  });
+}
 
-    // Get paginated mata kuliah data
-    const paginatedMataKuliah = paginate(krsMhs, ITEMS_PER_PAGE, currentPage);
+// Modify showMataKuliah to accept id and selectedValue as parameters
+async function showMataKuliah(id, selectedValue) {
+  try {
+    const mahasiswa = await getIpkMhsByNim(id); // Fetch student data based on the ID
+    const krsMhs = await getKrsMhs(id); // Fetch KRS data for the student based on the ID
+    console.log("Mahasiswa Data: ", mahasiswa);
+    console.log("KRS Data: ", krsMhs);
 
-    // Tambahkan data mata kuliah ke tabel
-    paginatedMataKuliah.forEach((mk, i) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                <td>${i + 1}</td>
-                <td>${mk.kodeMk}</td>
-                <td>${mk.mataKuliah}</td>
-                <td>${mk.semesterMk}</td>
-                <td>${mk.sks}</td>
-                <td>${mk.nilai}</td>
-            `;
-      tbody.appendChild(row);
-    });
+    if (mahasiswa && krsMhs) {
+      // Update header info
+      document.getElementById(
+        "nilaiIPK"
+      ).textContent = `IPK : ${mahasiswa.cumulativeIPK}`;
+      document.getElementById("nilaiIPS").textContent = `IPS : -`;
+      document.querySelector("h1.mt-4").textContent = `${mahasiswa.nama}`;
+      document.querySelector(
+        ".breadcrumb-item.active"
+      ).textContent = `${mahasiswa.nim}`;
 
-    // Tambahkan tombol kembali
-    const cardHeader = document.querySelector(".card-header");
-    if (!document.getElementById("backButton")) {
-      const backButton = document.createElement("button");
-      backButton.id = "backButton";
-      backButton.className = "btn btn-secondary btn-sm float-end";
-      backButton.innerHTML = "Kembali";
-      backButton.onclick = () => {
-        window.location.href = "index.html";
-      };
-      cardHeader.appendChild(backButton);
+      // Get table reference
+      const table = document.getElementById("datatablesSimple");
+      const tbody = table.querySelector("tbody");
+
+      // Clear existing table rows
+      tbody.innerHTML = "";
+
+      // Filter krsMhs based on the selected semester value
+      const filteredKrsMhs = krsMhs.filter((mk) => {
+        const semesterValue = mk.semesterMk; // The semester value from the data
+        console.log(
+          `Filtering: semesterMk = ${semesterValue}, selectedValue = ${selectedValue}`
+        );
+
+        // Compare both values as strings
+        return String(semesterValue).trim() === String(selectedValue).trim();
+      });
+
+      console.log("Filtered KRS Data: ", filteredKrsMhs); // Debug filtered data
+
+      // If no data matches the filter, display a message
+      if (filteredKrsMhs.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="6">Semester belum diambil</td>`;
+        tbody.appendChild(row);
+      } else {
+        // Paginate and populate the table with filtered data
+        const paginatedMataKuliah = paginate(
+          filteredKrsMhs,
+          ITEMS_PER_PAGE,
+          currentPage
+        );
+
+        paginatedMataKuliah.forEach((mk, i) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+			  <td>${i + 1}</td>
+			  <td>${mk.kodeMk}</td>
+			  <td>${mk.mataKuliah}</td>
+			  <td>${mk.semesterMk}</td>
+			  <td>${mk.sks}</td>
+			  <td>${mk.nilai}</td>
+			`;
+          tbody.appendChild(row);
+        });
+      }
+    } else {
+      console.error("Mahasiswa or KRS data is missing.");
     }
-
-    // Buat kontrol pagination untuk mata kuliah
-    const cardBody = table.closest(".card-body");
-    const existingPagination = cardBody.querySelector(".pagination-container");
-    if (existingPagination) {
-      existingPagination.remove();
-    }
-    // createPaginationControls(ma.length, cardBody);
-
-    // Reinisialisasi DataTable dengan opsi pagination dimatikan
-    const existingDataTable = table.closest(".dataTable-container");
-    if (existingDataTable) {
-      existingDataTable.parentNode.replaceChild(table, existingDataTable);
-    }
-    new simpleDatatables.DataTable(table, {
-      perPageSelect: false,
-      perPage: ITEMS_PER_PAGE,
-    });
+  } catch (error) {
+    console.error("Error occurred: ", error);
   }
 }
+
+// Initialize dropdown listener when the document is ready
+document.addEventListener("DOMContentLoaded", function () {
+  const studentId = "21010001"; // Replace with the actual student ID or a dynamic way to retrieve it
+  initializeDropdownListener(studentId); // Start listening for changes in the dropdown for the specific student ID
+});
