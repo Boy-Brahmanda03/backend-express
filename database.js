@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const fs = require("fs");
 
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
 	host: process.env.DB_HOST, // Masukkan hostname dari Aiven
 	port: process.env.DB_PORT, // Ambil port dari variabel lingkungan
 	user: process.env.DB_USER, // Username untuk database
@@ -13,10 +13,12 @@ const connection = mysql.createConnection({
 	connectTimeout: 10000, // Atur timeout agar lebih panjang untuk mencegah error ETIMEDOUT
 });
 
-connection.connect((err) => {
+db.connect((err) => {
 	if (err) {
 		console.error("Error connecting to MySQL:", err.message);
 		return;
 	}
 	console.log("Connected to MySQL");
 });
+
+module.exports = db;
