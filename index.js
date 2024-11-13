@@ -70,7 +70,7 @@ app.get("/api/mahasiswa/nim/:nim", (req, res) => {
 app.get("/api/mahasiswa/nama/:nama", (req, res) => {
   const { nama } = req.params;
   const query = `
-    SELECT m.*, COALESCE(i.IPK, 0) AS cumulativeIPK
+    SELECT m.*, COALESCE(i.IPK, 0) AS cumulativeIPK,
     FROM mahasiswa m
     LEFT JOIN ipk i ON m.nim = i.nim
     WHERE m.nama LIKE ?;

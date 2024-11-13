@@ -1,11 +1,11 @@
 window.addEventListener("DOMContentLoaded", (event) => {
-	// Simple-DataTables
-	// https://github.com/fiduswriter/Simple-DataTables/wiki
+  // Simple-DataTables
+  // https://github.com/fiduswriter/Simple-DataTables/wiki
 
-	const datatablesSimple = document.getElementById("datatablesSimple");
-	if (datatablesSimple) {
-		new simpleDatatables.DataTable(datatablesSimple);
-	}
+  const datatablesSimple = document.getElementById("datatablesSimple");
+  if (datatablesSimple) {
+    new simpleDatatables.DataTable(datatablesSimple);
+  }
 });
 
 // Konfigurasi pagination
@@ -37,78 +37,78 @@ function paginate(items, itemsPerPage, pageNumber) {
 
 // Fungsi untuk membuat kontrol pagination
 function createPaginationControls(totalItems, container) {
-	const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-	const paginationContainer = document.createElement("div");
-	paginationContainer.className =
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const paginationContainer = document.createElement("div");
+  paginationContainer.className =
     "pagination-container d-flex justify-content-end mt-3";
 
-		// Define urlParams to retrieve URL parameters
-		const urlParams = new URLSearchParams(window.location.search);
+  // Define urlParams to retrieve URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
 
-		// Previous button
-		const prevButton = document.createElement("button");
-		prevButton.className = "btn btn-outline-primary btn-sm me-2";
-		prevButton.innerHTML = "&laquo; Previous";
-		prevButton.disabled = currentPage === 1;
-		prevButton.onclick = () => {
-			if (currentPage > 1) {
-			currentPage--;
-			updateURLWithPage(currentPage);
-			if (urlParams.get("nim")) {
-				showMataKuliah();
-			}
-			initializeMahasiswaTable();
-			}
-		};
+  // Previous button
+  const prevButton = document.createElement("button");
+  prevButton.className = "btn btn-outline-primary btn-sm me-2";
+  prevButton.innerHTML = "&laquo; Previous";
+  prevButton.disabled = currentPage === 1;
+  prevButton.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      updateURLWithPage(currentPage);
+      if (urlParams.get("nim")) {
+        showMataKuliah();
+      }
+      initializeMahasiswaTable();
+    }
+  };
 
   // Next button
-	const nextButton = document.createElement("button");
-	nextButton.className = "btn btn-outline-primary btn-sm";
-	nextButton.innerHTML = "Next &raquo;";
-	nextButton.disabled = currentPage >= totalPages;
-	nextButton.onclick = () => {
-		if (currentPage < totalPages) {
-		currentPage++;
-		updateURLWithPage(currentPage);
-		initializeMahasiswaTable();
-		}
-	};
+  const nextButton = document.createElement("button");
+  nextButton.className = "btn btn-outline-primary btn-sm";
+  nextButton.innerHTML = "Next &raquo;";
+  nextButton.disabled = currentPage >= totalPages;
+  nextButton.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      updateURLWithPage(currentPage);
+      initializeMahasiswaTable();
+    }
+  };
 
-	// Page info
-	const pageInfo = document.createElement("span");
-	pageInfo.className = "mx-3 align-self-center";
-	pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  // Page info
+  const pageInfo = document.createElement("span");
+  pageInfo.className = "mx-3 align-self-center";
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
 
-	paginationContainer.appendChild(prevButton);
-	paginationContainer.appendChild(pageInfo);
-	paginationContainer.appendChild(nextButton);
-	container.appendChild(paginationContainer);
+  paginationContainer.appendChild(prevButton);
+  paginationContainer.appendChild(pageInfo);
+  paginationContainer.appendChild(nextButton);
+  container.appendChild(paginationContainer);
 }
 
 // Fungsi untuk update URL dengan parameter page
 function updateURLWithPage(page) {
-	const url = new URL(window.location.href);
-	url.searchParams.set("page", page);
-	window.history.pushState({}, "", url);
+  const url = new URL(window.location.href);
+  url.searchParams.set("page", page);
+  window.history.pushState({}, "", url);
 }
 
 async function getMahasiswa() {
-	const url = "http://localhost:3001/api/mahasiswa";
-	try {
-		const response = await fetch(url, {
-		headers: {
-			"Content-Type": "application/json",
-		},
-		});
-		if (!response.ok) {
-		throw new Error(`Response status: ${response.status}`);
-		}
+  const url = "http://localhost:3001/api/mahasiswa";
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
 
-		const json = await response.json();
-		return json;
-	} catch (error) {
-		console.error(error.message);
-	}
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 async function getIpkMhsByNim(nim) {
@@ -200,23 +200,6 @@ async function initializeMahasiswaTable() {
 
 // Function to initialize the event listener on the dropdown
 // Function to initialize the event listener on the dropdown
-function initializeDropdownListener(id) {
-  const dropdown = document.getElementById("ddlViewBy");
-
-  if (!dropdown) {
-    console.error("Dropdown element with id 'ddlViewBy' not found.");
-    return;
-  }
-
-  // Event listener to trigger when the dropdown value changes
-  dropdown.addEventListener("change", function () {
-    const selectedValue = dropdown.value;
-    console.log("Dropdown value changed: ", selectedValue); // For debugging
-    showMataKuliah(id, selectedValue); // Trigger the function with the student id and selected semester
-  });
-}
-
-// Modify showMataKuliah to accept id and selectedValue as parameters
 async function showMataKuliah(id, selectedValue) {
   try {
     const mahasiswa = await getIpkMhsByNim(id); // Fetch student data based on the ID
@@ -224,12 +207,25 @@ async function showMataKuliah(id, selectedValue) {
     console.log("Mahasiswa Data: ", mahasiswa);
     console.log("KRS Data: ", krsMhs);
 
+    // Filter the KRS data based on the selected semester (selectedValue)
+    const filteredKrsMhs = krsMhs.filter((mk) => {
+      const semesterValue = mk.semesterMk; // The semester value from the data
+      console.log(
+        `Filtering: semesterMk = ${semesterValue}, selectedValue = ${selectedValue}`
+      );
+      // Compare both values as strings
+      return String(semesterValue).trim() === String(selectedValue).trim();
+    });
+
+    // Calculate IPS for the filtered courses
+    const IPS = calculateIPS(filteredKrsMhs);
+
     if (mahasiswa && krsMhs) {
       // Update header info
       document.getElementById(
         "nilaiIPK"
       ).textContent = `IPK : ${mahasiswa.cumulativeIPK}`;
-      document.getElementById("nilaiIPS").textContent = `IPS : -`;
+      document.getElementById("nilaiIPS").textContent = `IPS : ${IPS}`;
       document.querySelector("h1.mt-4").textContent = `${mahasiswa.nama}`;
       document.querySelector(
         ".breadcrumb-item.active"
@@ -241,19 +237,6 @@ async function showMataKuliah(id, selectedValue) {
 
       // Clear existing table rows
       tbody.innerHTML = "";
-
-      // Filter krsMhs based on the selected semester value
-      const filteredKrsMhs = krsMhs.filter((mk) => {
-        const semesterValue = mk.semesterMk; // The semester value from the data
-        console.log(
-          `Filtering: semesterMk = ${semesterValue}, selectedValue = ${selectedValue}`
-        );
-
-        // Compare both values as strings
-        return String(semesterValue).trim() === String(selectedValue).trim();
-      });
-
-      console.log("Filtered KRS Data: ", filteredKrsMhs); // Debug filtered data
 
       // If no data matches the filter, display a message
       if (filteredKrsMhs.length === 0) {
@@ -289,8 +272,44 @@ async function showMataKuliah(id, selectedValue) {
   }
 }
 
+// Function to calculate IPS for the filtered courses
+function calculateIPS(filteredKrsMhs) {
+  // Sum up SKS * Nilai for each mata kuliah
+  let totalBobot = 0;
+  let totalSks = 0;
+
+  filteredKrsMhs.forEach((mk) => {
+    const bobot = mk.sks * mk.bobot; // SKS * Nilai for each course
+    totalBobot += bobot;
+    totalSks += mk.sks; // Sum of SKS
+  });
+
+  // Calculate IPS
+  const IPS = totalBobot / totalSks;
+
+  // Return the result, rounded to two decimal places
+  return IPS.toFixed(2);
+}
+
 // Initialize dropdown listener when the document is ready
 document.addEventListener("DOMContentLoaded", function () {
-  const studentId = "21010001"; // Replace with the actual student ID or a dynamic way to retrieve it
-  initializeDropdownListener(studentId); // Start listening for changes in the dropdown for the specific student ID
+  const nim = "21010001"; // Replace with the actual student ID or a dynamic way to retrieve it
+  initializeDropdownListener(nim); // Start listening for changes in the dropdown for the specific student ID
 });
+
+// Function to initialize the event listener on the dropdown
+function initializeDropdownListener(nim) {
+  const dropdown = document.getElementById("ddlViewBy");
+
+  if (!dropdown) {
+    console.error("Dropdown element with id 'ddlViewBy' not found.");
+    return;
+  }
+
+  // Event listener to trigger when the dropdown value changes
+  dropdown.addEventListener("change", function () {
+    const selectedValue = dropdown.value;
+    console.log("Dropdown value changed: ", selectedValue); // For debugging
+    showMataKuliah(nim, selectedValue); // Trigger the function with the student id and selected semester
+  });
+}
